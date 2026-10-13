@@ -19,6 +19,8 @@ PAWP_REVISION = "8b68e78c31dd1e12e9c603901b8cd0d9d6510b2a"
 PAWP_BASE = f"https://raw.githubusercontent.com/s0d3s/PyAudioWPatch/{PAWP_REVISION}/"
 SAMPLE_URL = "https://cdn.chatwm.opensmodel.sberdevices.ru/GigaAM/example.wav"
 SAMPLE_SHA256 = "d8aaaa18a5098d7c6de0595ae7ac1e64cacd0d4022af3595213bdaf23be77e69"
+MICROSOFT_NOTICE_SHA256 = "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1"
+MICROSOFT_NOTICE_URL = "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx"
 
 # The pinned Windows SentencePiece wheel omits all license files. Preserve the
 # exact matching upstream license plus every vendored third-party license.
@@ -62,6 +64,20 @@ def fetch(url, target, expected=None, limit=60_000_000):
 def notice_name(path):
     name = Path(path).name.lower()
     return any(word in name for word in ("license", "licence", "copying", "notice", "copyright"))
+
+
+def collect_microsoft_notice(bundle):
+    # Full original public vendor terms acquired for earlier verified releases.
+    # Use a checksum-pinned source artifact; no WAF/authentication workarounds.
+    cached = ROOT / "assets/licenses/Microsoft-VC-Runtime-2015-2022-License.docx"
+    if not cached.is_file() or digest(cached) != MICROSOFT_NOTICE_SHA256:
+        raise RuntimeError("Pinned Microsoft runtime notice missing or changed; refuse incomplete release")
+    target = Path(bundle) / "licenses" / cached.name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(cached, target)
+    return {"url": MICROSOFT_NOTICE_URL, "file": target.name, "sha256": MICROSOFT_NOTICE_SHA256,
+            "bytes": target.stat().st_size, "source_page": "https://visualstudio.microsoft.com/license-terms/vs2022-cruntime/",
+            "verification": "Exact SHA256-pinned repository copy of the original public vendor download"}
 
 
 def collect_licenses(bundle):
@@ -155,13 +171,7 @@ def main():
     else:
         acquired.append(fetch(f"https://raw.githubusercontent.com/python/cpython/v{python_version}/LICENSE",
                               notices / "Python-LICENSE.txt", limit=100_000))
-    microsoft = fetch(
-        "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx",
-        notices / "Microsoft-VC-Runtime-2015-2022-License.docx",
-        "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1",
-        limit=1_000_000)
-    microsoft["source_page"] = "https://visualstudio.microsoft.com/license-terms/vs2022-cruntime/"
-    acquired.append(microsoft)
+    acquired.append(collect_microsoft_notice(bundle))
     acquired.append(fetch(
         "https://huggingface.co/ai-sage/GigaAM-Multilingual/resolve/2f8a57144e6ec3adfd32fe0484d9ea9913305bc8/README.md",
         notices / "GigaAM-model-card.md"))

@@ -1,0 +1,29 @@
+{
+  "scope": "Only public immutable/source URLs and artifact hashes; raw pip metadata/environment omitted",
+  "packages": [
+    {
+      "name": "torch",
+      "version": "2.10.0+cpu",
+      "url": "https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-win_amd64.whl",
+      "archive_info": {
+        "hash": "sha256=21cb5436978ef47c823b7a813ff0f8c2892e266cfe0f1d944879b5fba81bf4e1",
+        "hashes": {
+          "sha256": "21cb5436978ef47c823b7a813ff0f8c2892e266cfe0f1d944879b5fba81bf4e1"
+        }
+      },
+      "vcs_info": null
+    },
+    {
+      "name": "torchaudio",
+      "version": "2.10.0+cpu",
+      "url": "https://download-r2.pytorch.org/whl/cpu/torchaudio-2.10.0%2Bcpu-cp312-cp312-win_amd64.whl",
+      "archive_info": {
+        "hash": "sha256=32707736ef079a673433ca36c227c135375602b74d41ee21ff18d1e75caee0b0",
+        "hashes": {
+          "sha256": "32707736ef079a673433ca36c227c135375602b74d41ee21ff18d1e75caee0b0"
+        }
+      },
+      "vcs_info": null
+    }
+  ]
+}

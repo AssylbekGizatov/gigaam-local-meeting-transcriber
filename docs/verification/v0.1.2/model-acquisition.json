@@ -1,0 +1,19 @@
+{
+  "backend": "gigaam",
+  "repository": "ai-sage/GigaAM-Multilingual",
+  "revision": "2f8a57144e6ec3adfd32fe0484d9ea9913305bc8",
+  "code_revision": "7447938d791c4f3e643386ee22c33777004293a5",
+  "license": "MIT",
+  "model_card": "https://huggingface.co/ai-sage/GigaAM-Multilingual/blob/2f8a57144e6ec3adfd32fe0484d9ea9913305bc8/README.md",
+  "sha256": {
+    "config.json": "c830232c7d51688a630a221517b52585ab5ee57e1d3c21bcbae01759351d2653",
+    "pytorch_model.bin": "e1db43873ec5e296f229572e06e2470fc157ac9f8d4aacabda295630b9b91728",
+    "LICENSE": "f00de6715714c7a63d08639cdbfaa40224eefc407302614bd19f1a8b98c875aa"
+  },
+  "downloaded_at": "2026-10-12T16:10:14.975577+00:00",
+  "artifact_sources": {
+    "config.json": "https://huggingface.co/ai-sage/GigaAM-Multilingual/resolve/2f8a57144e6ec3adfd32fe0484d9ea9913305bc8/config.json",
+    "pytorch_model.bin": "https://huggingface.co/ai-sage/GigaAM-Multilingual/resolve/2f8a57144e6ec3adfd32fe0484d9ea9913305bc8/pytorch_model.bin",
+    "LICENSE": "https://raw.githubusercontent.com/salute-developers/GigaAM/7447938d791c4f3e643386ee22c33777004293a5/LICENSE"
+  }
+}

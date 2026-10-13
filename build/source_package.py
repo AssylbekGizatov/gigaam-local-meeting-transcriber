@@ -20,6 +20,7 @@ ROOT_FILES = (
     "LICENSE", "NOTICE.md", "README.md", ".gitignore", "CHANGELOG.md",
 )
 BINARY_HASHES = {
+    "assets/licenses/Microsoft-VC-Runtime-2015-2022-License.docx": "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1",
     "fonts/DejaVuSans.ttf": "3fdf69cabf06049ea70a00b5919340e2ce1e6d02b0cc3c4b44fb6801bd1e0d22",
     "assets/asr-smoke.wav": "d8aaaa18a5098d7c6de0595ae7ac1e64cacd0d4022af3595213bdaf23be77e69",
 }

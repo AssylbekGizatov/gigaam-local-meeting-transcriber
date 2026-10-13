@@ -1,0 +1,58 @@
+{
+  "scope": "Explicit current report whitelist; no raw build-tree merge",
+  "verifier_sha256": "1f8b7b990144469c647861c151cc4ca73c2e8ed04b0635ce0ae88290e2c6cadb",
+  "files": [
+    {
+      "file": "dependency-inventory.json",
+      "sha256": "14d6cda21135d23c2baf5ee0920a7d81a5961a98aa56949112500bbbbd786ed6"
+    },
+    {
+      "file": "deployment-limits.json",
+      "sha256": "db46e798a574c95db99e650996c04672bdaee724b10b0307531781578eb9b1a3"
+    },
+    {
+      "file": "frozen-selftest.json",
+      "sha256": "58f5ef6288e151b661f898321046314c3e6f9c02a7d2eb38ee7f54cec8f34810"
+    },
+    {
+      "file": "frozen-source-match.json",
+      "sha256": "8499ee1df012681e185ea59737c76f7e443224f42d78be5b7506a9c5cc801767"
+    },
+    {
+      "file": "gigaam-acquisition.json",
+      "sha256": "7e44044b5753a0c6ffd9818c2448f9603563c16eac0c3da0c96f7b469dc80cfc"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/change.patch",
+      "sha256": "c0431b0ac2e3f7880d52cabf7cd6cf22c112017f5cf45e0846a340665705b926"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/provenance.json",
+      "sha256": "4359181f496e1222e826df5a0bf6a53b6d3938b4b904a3598a0bd167529a6e6d"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/utils.patched.py.txt",
+      "sha256": "01a6a990de113a62e2e07427b3f727dfd1fe48eeacbac06ce79c4ee03d8c86f3"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/utils.upstream.py.txt",
+      "sha256": "a6366d63c304b162202bf97a3c2da05a453741c475ab3bf160fc0428957282f9"
+    },
+    {
+      "file": "model-acquisition.json",
+      "sha256": "5f95a107cb22c0640590a1bb98729947e9936973963640ccdc5e91dc12da4e9b"
+    },
+    {
+      "file": "runtime-network-audit.json",
+      "sha256": "e6fd05d7fa7e239b4e8aa58da31561a8a2b8d1e9e14932b93fc9a4c2a7c0edbb"
+    },
+    {
+      "file": "torch-acquisition.json",
+      "sha256": "2f83b5736aa180a378d64aca646757f2d9c16dbb862371dc7deb4437c812e4fe"
+    },
+    {
+      "file": "unit-tests.xml",
+      "sha256": "4745c76e8cc7bcef273465f40a2a5cd038d4986b6e9b37189d977e0053c09d91"
+    }
+  ]
+}

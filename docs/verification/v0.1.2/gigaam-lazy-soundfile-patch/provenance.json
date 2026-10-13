@@ -1,0 +1,8 @@
+{
+  "source": "https://github.com/salute-developers/GigaAM/blob/7447938d791c4f3e643386ee22c33777004293a5/gigaam/utils.py",
+  "license": "MIT (preserved in licenses/gigaam)",
+  "original_sha256_lf": "a6366d63c304b162202bf97a3c2da05a453741c475ab3bf160fc0428957282f9",
+  "patched_sha256_lf": "01a6a990de113a62e2e07427b3f727dfd1fe48eeacbac06ce79c4ee03d8c86f3",
+  "purpose": "Defer unused path-based AudioDataset soundfile import; omit libsndfile and bundled codecs from desktop runtime",
+  "limitation": "Upstream optional file-based AudioDataset helper is not provided by the frozen desktop application"
+}

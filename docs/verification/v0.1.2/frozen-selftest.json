@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "runtime": {
+    "python": "3.12.3",
+    "platform": "Windows",
+    "architecture": "AMD64",
+    "frozen": true,
+    "dependencies": {
+      "numpy": "2.2.6",
+      "torch": "2.10.0+cpu",
+      "torchaudio": "2.10.0+cpu",
+      "gigaam": "0.2.0",
+      "PyAudioWPatch": "0.2.12.9",
+      "python-docx": "1.2.0",
+      "reportlab": "4.4.9"
+    }
+  },
+  "checks": [
+    {
+      "name": "official-model-checksums",
+      "status": "passed"
+    },
+    {
+      "name": "public-fixture-inference",
+      "status": "passed"
+    },
+    {
+      "name": "bounded-streaming-fake-model",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic-unicode-exports",
+      "status": "passed"
+    }
+  ],
+  "physical_capture_tested": false,
+  "real_kazakh_english_mixed_speech_tested": false,
+  "network_scope": "Pinned local native model; no network request or hardware capture in this test. OS-level network isolation is not certified.",
+  "model": {
+    "name": "ai-sage/GigaAM-Multilingual",
+    "architecture": "220M CTC",
+    "device": "cpu",
+    "dtype": "float32",
+    "model_revision": "2f8a57144e6ec3adfd32fe0484d9ea9913305bc8",
+    "code_revision": "7447938d791c4f3e643386ee22c33777004293a5",
+    "sha256": {
+      "config.json": "c830232c7d51688a630a221517b52585ab5ee57e1d3c21bcbae01759351d2653",
+      "pytorch_model.bin": "e1db43873ec5e296f229572e06e2470fc157ac9f8d4aacabda295630b9b91728"
+    }
+  },
+  "fixture": {
+    "fixture_sha256": "d8aaaa18a5098d7c6de0595ae7ac1e64cacd0d4022af3595213bdaf23be77e69",
+    "fixture_source": "https://cdn.chatwm.opensmodel.sberdevices.ru/GigaAM/example.wav",
+    "duration_seconds": 11.29,
+    "inference_seconds_including_load": 15.29,
+    "recognized_text": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый",
+    "expected_text_matches": true,
+    "word_count": 26,
+    "word_timestamps_valid": true,
+    "echo": {
+      "scope": "Actual GigaAM decoding of public PCM plus synthetic scaled/delayed microphone echo; no physical capture",
+      "delay_seconds": 0.12,
+      "microphone_gain": 0.3,
+      "reference_words": 26,
+      "recognized_microphone_words": 26,
+      "microphone_duplicate_words_removed": 26,
+      "system_reference_unchanged": true,
+      "pcm_history_bytes": 9216000
+    },
+    "scope": "One public Russian fixture; Kazakh/English/mixed ASR and physical capture are not verified by this check."
+  },
+  "streaming": {
+    "scope": "Fake model, no language quality assertion",
+    "simulated_seconds": 7200,
+    "inference_windows": 1029,
+    "maximum_pending_seconds": 12.0,
+    "configured_bound_seconds": 48.0,
+    "peak_parallel_inference": 1,
+    "pending_after_stop_seconds": 0.0
+  },
+  "exports": {
+    "scope": "Synthetic Unicode and repeated-word export checks only; not model language tests.",
+    "source_labels": [
+      "microphone",
+      "system"
+    ],
+    "files": {
+      "TXT": {
+        "filename": "synthetic-unicode.txt",
+        "bytes": 642,
+        "sha256": "6ecbc548af4d537107df4b27c2ff485407bbfa2d4a7d40c475a2d0d42aad4a14",
+        "existing_file_preserved": true
+      },
+      "MD": {
+        "filename": "synthetic-unicode.md",
+        "bytes": 654,
+        "sha256": "08b6ecf48704e8f851474265e114c73a30e6156ce887c04c8c2841c68e8a9063",
+        "existing_file_preserved": true
+      },
+      "DOCX": {
+        "filename": "synthetic-unicode.docx",
+        "bytes": 37099,
+        "sha256": "510143ce1703883693aaf1e95b0969f5bdd3c095bc89f6981b7336afa87b15c2",
+        "existing_file_preserved": true
+      },
+      "PDF": {
+        "filename": "synthetic-unicode.pdf",
+        "bytes": 26805,
+        "sha256": "b833635c9e607ad6520cb64ce030ee0de669138fbfdd4c41d5bb564e16d8e145",
+        "existing_file_preserved": true
+      }
+    }
+  },
+  "elapsed_seconds": 31.119,
+  "blocked_python_network_attempts": 0
+}

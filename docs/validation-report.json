@@ -4,13 +4,13 @@
   "as_of_date": "2026-10-14",
   "scope": "Local source checks with public/synthetic audio; current frozen executable validation remains a separate build step",
   "automated_tests": {
-    "passed": 147,
+    "passed": 149,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "seconds": 22.73,
+    "seconds": 19.177,
     "ruff": "clean",
-    "evidence": "verification/v0.1.2/unit-tests-source.xml"
+    "evidence": "verification/v0.1.2/unit-tests-final.xml"
   },
   "source_selftest": {
     "status": "passed",
@@ -33,7 +33,31 @@
     "v0.1.2_speaker_echo": "Pending explicit user-started hardware test",
     "real_kazakh_and_natural_mixed_speech": "Not established by synthetic Unicode rules tests"
   },
-  "current_frozen_validation": "Results of the exact EXE are curated into provenance in its ZIP after build-time verification; do not reuse prior-version measurements",
+  "current_frozen_validation": {
+    "scope": "Separate local Windows x64 build; GitHub Release build uses its own provenance reports",
+    "status": "passed",
+    "python": "3.12.3",
+    "seconds": 31.119,
+    "echo": {
+      "scope": "Actual GigaAM decoding of public PCM plus synthetic scaled/delayed microphone echo; no physical capture",
+      "delay_seconds": 0.12,
+      "microphone_gain": 0.3,
+      "reference_words": 26,
+      "recognized_microphone_words": 26,
+      "microphone_duplicate_words_removed": 26,
+      "system_reference_unchanged": true,
+      "pcm_history_bytes": 9216000
+    },
+    "source_match_modules": 14,
+    "tcp_observations": 0,
+    "udp_observations": 0,
+    "endpoint_samples": 45,
+    "blocked_python_network_attempts": 0,
+    "physical_devices_tested": false,
+    "clean_python_free_vm_tested": false,
+    "physical_network_disconnection_tested": false,
+    "evidence_directory": "verification/v0.1.2"
+  },
   "prior_version_evidence": {
     "schema_version": 2,
     "application_version": "0.1.1",
@@ -285,5 +309,21 @@
         }
       }
     }
+  },
+  "initial_echo_source_validation": {
+    "passed": 147,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 22.73,
+    "ruff": "clean",
+    "evidence": "verification/v0.1.2/unit-tests-source.xml"
+  },
+  "build_vendor_notice": {
+    "source": "Original public Microsoft VC-runtime full terms, copied from an earlier verified build",
+    "repository_path": "assets/licenses/Microsoft-VC-Runtime-2015-2022-License.docx",
+    "sha256": "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1",
+    "original_url": "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx",
+    "reason": "Original vendor endpoint returned HTTP 403 during CI; pinned cache avoids an external build dependency without changing or bypassing security settings"
   }
 }
