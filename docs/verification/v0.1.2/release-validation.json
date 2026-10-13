@@ -1,0 +1,44 @@
+{
+  "application_version": "0.1.2",
+  "as_of_date": "2026-10-14",
+  "build_commit": "810bae0cd5ddf498933407860d22bb6a4f9d4b13",
+  "workflow_run": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/actions/runs/38458338915",
+  "conclusion": "success",
+  "release_url": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/releases/tag/v0.1.2",
+  "archive": {
+    "name": "GigaAM-Meeting-windows-x64.zip",
+    "size": 990459876,
+    "digest": "sha256:fe024933fc2de6f1aad75a6177c1ec5080db66c3bf91d494623dcf23ba38435c",
+    "browser_download_url": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/releases/download/v0.1.2/GigaAM-Meeting-windows-x64.zip"
+  },
+  "checksum_sidecar_matches_github_digest": true,
+  "tests": {
+    "local_passed": 149,
+    "local_ruff": "clean",
+    "workflow_gates": "Source tests, Ruff, actual frozen echo inference, source attestation, exports, endpoint sampling, PE audit, package checks all completed successfully"
+  },
+  "echo_check": {
+    "source": "Public Russian PCM with synthetic scaled/delayed microphone leak; not hardware",
+    "system_words": 26,
+    "microphone_words": 26,
+    "microphone_duplicate_words_removed": 26
+  },
+  "hardware_acceptance": "New v0.1.2 speaker echo acceptance pending an explicit user-started test; no user's audio or transcript published",
+  "local_build": {
+    "python": "3.12.3",
+    "frozen_seconds": 31.119,
+    "source_match_modules": 14,
+    "tcp": 0,
+    "udp": 0,
+    "endpoint_samples": 45,
+    "archive_sha256": "68a3d6cdf1431f285ed146a6f70472ea80d47c468f8da5aa169dd84fe238ab04",
+    "archive_crc_and_file_manifest": "passed",
+    "application_file_hashes_verified": 3994,
+    "note": "A separate local build; GitHub runner uses Python 3.12.10 and has its own archive digest."
+  },
+  "limits": [
+    "Transcript-only duplicate reduction, no acoustic AEC or WAV cleanup",
+    "Short/uncertain matches remain; independent/quiet double-talk needs further hardware acceptance",
+    "No clean Python-free VM or physical network-disconnection certification"
+  ]
+}
