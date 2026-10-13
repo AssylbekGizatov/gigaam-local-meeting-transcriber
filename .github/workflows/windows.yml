@@ -1,0 +1,45 @@
+name: Windows portable build
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a new pre-release after successful checks
+        type: boolean
+        default: false
+      tag:
+        description: New release tag (must not already exist)
+        type: string
+        default: v0.1.0
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          architecture: x64
+      - name: Create isolated build environment
+        shell: pwsh
+        run: python -m venv C:\gigaam-build\v
+      - name: Build and verify
+        shell: pwsh
+        run: ./build/build.ps1 -Python C:\gigaam-build\v\Scripts\python.exe -Output C:\gigaam-release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GigaAM-Meeting-windows-x64
+          path: C:/gigaam-release/*
+      - name: Publish new pre-release
+        if: inputs.publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$') { throw 'Invalid release tag' }
+          gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -eq 0) { throw 'Release already exists; refusing overwrite' }
+          gh release create $env:RELEASE_TAG C:/gigaam-release/* --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --prerelease --title "GigaAM Local Meeting $env:RELEASE_TAG" --notes-file docs/RELEASE.md
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }

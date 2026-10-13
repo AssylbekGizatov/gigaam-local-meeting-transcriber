@@ -1,0 +1,70 @@
+{
+  "scope": "Explicit current report whitelist; no raw build-tree merge",
+  "verifier_sha256": "1f8b7b990144469c647861c151cc4ca73c2e8ed04b0635ce0ae88290e2c6cadb",
+  "files": [
+    {
+      "file": "dependency-inventory.json",
+      "sha256": "14d6cda21135d23c2baf5ee0920a7d81a5961a98aa56949112500bbbbd786ed6"
+    },
+    {
+      "file": "deployment-limits.json",
+      "sha256": "db46e798a574c95db99e650996c04672bdaee724b10b0307531781578eb9b1a3"
+    },
+    {
+      "file": "frozen-selftest.json",
+      "sha256": "183aa8d25075f5d046e98135cc300d5783c5c10d150368e6484e47c6861c3257"
+    },
+    {
+      "file": "frozen-source-match.json",
+      "sha256": "670f42bc12475c182596038c2191c781b825c74fd202ea6a284fd2e780264792"
+    },
+    {
+      "file": "gigaam-acquisition.json",
+      "sha256": "7e44044b5753a0c6ffd9818c2448f9603563c16eac0c3da0c96f7b469dc80cfc"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/change.patch",
+      "sha256": "c0431b0ac2e3f7880d52cabf7cd6cf22c112017f5cf45e0846a340665705b926"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/provenance.json",
+      "sha256": "4359181f496e1222e826df5a0bf6a53b6d3938b4b904a3598a0bd167529a6e6d"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/utils.patched.py.txt",
+      "sha256": "01a6a990de113a62e2e07427b3f727dfd1fe48eeacbac06ce79c4ee03d8c86f3"
+    },
+    {
+      "file": "gigaam-lazy-soundfile-patch/utils.upstream.py.txt",
+      "sha256": "a6366d63c304b162202bf97a3c2da05a453741c475ab3bf160fc0428957282f9"
+    },
+    {
+      "file": "model-acquisition.json",
+      "sha256": "174c276190e65eb667ab9fc78a51d0a8fd86128b1e5770e695c7352c6d246c60"
+    },
+    {
+      "file": "public-language-evaluation.json",
+      "sha256": "7e5ad698a143d18d2474f5d5215e1e68b244b771a005466e7481c1a714968c5d"
+    },
+    {
+      "file": "real-streaming-pcm.json",
+      "sha256": "523cf05a316927383fdc3c2c21f9001cf460de4bb84f1a8756e2464d8acbec39"
+    },
+    {
+      "file": "runtime-network-audit.json",
+      "sha256": "91303236add176248e6e42690a189b2c22c26719f0aa43d57e63d078aab36b49"
+    },
+    {
+      "file": "source-baseline.json",
+      "sha256": "7136dd89fc5661a543e910521b864fd078d65070d88a0d7a43bae8d0e9a34056"
+    },
+    {
+      "file": "torch-acquisition.json",
+      "sha256": "2f83b5736aa180a378d64aca646757f2d9c16dbb862371dc7deb4437c812e4fe"
+    },
+    {
+      "file": "unit-tests.xml",
+      "sha256": "eeea5c89bb128627a2b32cff3a358a2da8679dec276e7df78db962979d485660"
+    }
+  ]
+}

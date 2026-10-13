@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "method": "Python bytecode/constants, exception tables, stack sizes and names compared; debug paths/line tables excluded",
+  "files": [
+    {
+      "file": "app.py",
+      "source_sha256": "c92828678b79000efa5ae30117b86d5692e5137526fc2a59bfa0d4d97f6f19e5",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/__init__.py",
+      "source_sha256": "29ba2a072b860403f74747b337c3beda137705e9c65638f8c2421de3c38906e3",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/audio.py",
+      "source_sha256": "ac086ba0c84ffbf4dd5dfb93aea18b211d096bfa6c557b2a1d10c5b67df0498e",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/contracts.py",
+      "source_sha256": "f30507314ace30034958bd1f06abdf63f27ecd3d0a278c5053b22f799b93f427",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/engine.py",
+      "source_sha256": "46f21075436625fe5faf1cfe18dfe7743c718b0c90143b1e9ed4d1a4436d5bec",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/exports.py",
+      "source_sha256": "179d06eafda1af5817449b99ec49f2e930831aae9d390e2d1915cef8782b8dbc",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/gui.py",
+      "source_sha256": "ecd6fcb2f62562936fa037750e609691fce5960b327d08d65b1c534228247ce4",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/offline.py",
+      "source_sha256": "eeafac59598471af44ff8ac34fb12a5e96e0f06be5fe52c56b650efc9289ebda",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/recording.py",
+      "source_sha256": "0fe5f9409dda37885b7131393065fb9954cd74f721133cd704b5c833f5d56567",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/selftest.py",
+      "source_sha256": "0e6ef385f95c9c9a6f255b55321ea1a43d2a1eb049dc12623c243b1a08ca4ef8",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/session.py",
+      "source_sha256": "6a3f1836fb42c6511321750b13a4070d289bf3be4d8566a9fc08e41d49c76cd5",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/storage.py",
+      "source_sha256": "d484717518ebade46c2bd13dffb67f951d5d0ed2de3b32d68db54be023e3c855",
+      "bytecode_matches": true
+    },
+    {
+      "file": "gigaam_meeting/streaming.py",
+      "source_sha256": "1fa1fa171e25ade98c5551ac97d4cffdf7b9faed719b1e81555eefbbc7931d14",
+      "bytecode_matches": true
+    }
+  ]
+}

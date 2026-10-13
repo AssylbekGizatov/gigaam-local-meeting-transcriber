@@ -1,0 +1,9 @@
+{
+  "platform": "Windows x64, bundled CPU runtime; no separate Python/Docker/FFmpeg required",
+  "capture": "Selected WASAPI devices only; whole output device includes other applications; process-specific capture unsupported",
+  "selection": "No automatic default-device fallback; fingerprints use PortAudio metadata, which has no stable endpoint GUID",
+  "hardware": "Physical microphone/loopback acceptance remains a separate manual check; fake-driver and public-PCM tests do not establish hardware behavior",
+  "languages": "Small public Russian/English read-speech fixtures and synthetic concatenation are limited examples; Kazakh and natural mixed speech remain unverified",
+  "network": "Python guard plus sampled process TCP/UDP endpoints are limited evidence; no clean VM or physical network disconnection certification",
+  "native": "PE imports/delay imports are audited; arbitrary dynamic LoadLibrary paths are not fully proven"
+}

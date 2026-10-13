@@ -1,0 +1,48 @@
+{
+  "scope": "One public read-speech clip per RU/EN; synthetic RU+EN concatenation; not natural multilingual conversation or hardware capture",
+  "kazakh_tested": false,
+  "physical_capture_tested": false,
+  "english_source": "https://huggingface.co/datasets/hf-internal-testing/librispeech_asr_dummy/tree/5be91486e11a2d616f4ec5db8d3fd248585ac07a",
+  "english_license": "CC BY 4.0, LibriSpeech/OpenSLR12, Vassil Panayotov et al.; underlying LibriVox books public domain",
+  "samples": [
+    {
+      "language": "ru",
+      "reference": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый",
+      "hypothesis": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый",
+      "reference_words": 26,
+      "word_edits": 0,
+      "wer": 0.0,
+      "duration_seconds": 11.29,
+      "inference_seconds": 2.894
+    },
+    {
+      "language": "en",
+      "reference": "MISTER QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL",
+      "hypothesis": "mister quilter is the apostle of the middle classes and we are glad to welcome his gospel",
+      "reference_words": 17,
+      "word_edits": 0,
+      "wer": 0.0,
+      "duration_seconds": 5.855,
+      "inference_seconds": 1.327
+    },
+    {
+      "language": "synthetic_ru_en",
+      "reference": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый MISTER QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL",
+      "hypothesis": "ничьих не требуя похвал счастлив уж я надеждый сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый mister quilter is the apostle of the middle classes and we are glad to welcome his gospel",
+      "reference_words": 43,
+      "word_edits": 1,
+      "wer": 0.0233,
+      "duration_seconds": 17.495,
+      "inference_seconds": 3.377
+    }
+  ],
+  "synthetic_mixed_streaming": {
+    "hypothesis": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукомория дуб зеленый mister quilter is the apostle of the middle classes and we are glad to welcome his gospel",
+    "word_edits": 1,
+    "reference_words": 43,
+    "wer": 0.0233,
+    "pending_after_stop": 8.881784197001252e-16,
+    "warnings": []
+  },
+  "blocked_python_network_attempts": 0
+}

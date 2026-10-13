@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "as_of_date": "2026-10-13",
+  "scope": "Current source, public RU/EN and synthetic mixed PCM, and final rc2 frozen executable validated; final archive packaging audited separately",
+  "source_validation_status": "passed",
+  "automated_tests": {
+    "framework": "pytest",
+    "passed": 116,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 19.045,
+    "ruff": "clean",
+    "evidence_name": "verification/unit-tests.xml",
+    "public_hostname_and_paths_removed": true
+  },
+  "source_selftest": {
+    "evidence_name": "verification/source-baseline.json",
+    "status": "passed",
+    "frozen": false,
+    "runtime": {
+      "platform": "Windows",
+      "architecture": "AMD64",
+      "python": "3.12.3",
+      "numpy": "2.2.6",
+      "torch": "2.10.0+cpu",
+      "torchaudio": "2.10.0+cpu",
+      "gigaam": "0.2.0"
+    },
+    "model": {
+      "name": "ai-sage/GigaAM-Multilingual",
+      "architecture": "220M CTC",
+      "device": "cpu",
+      "dtype": "float32",
+      "model_revision": "2f8a57144e6ec3adfd32fe0484d9ea9913305bc8",
+      "code_revision": "7447938d791c4f3e643386ee22c33777004293a5",
+      "sha256": {
+        "config.json": "c830232c7d51688a630a221517b52585ab5ee57e1d3c21bcbae01759351d2653",
+        "pytorch_model.bin": "e1db43873ec5e296f229572e06e2470fc157ac9f8d4aacabda295630b9b91728"
+      }
+    },
+    "public_fixture": {
+      "source": "https://cdn.chatwm.opensmodel.sberdevices.ru/GigaAM/example.wav",
+      "sha256": "d8aaaa18a5098d7c6de0595ae7ac1e64cacd0d4022af3595213bdaf23be77e69",
+      "duration_seconds": 11.29,
+      "word_count": 26,
+      "expected_text_matches": true,
+      "word_timestamps_valid": true,
+      "inference_seconds_including_initial_load": 15.546,
+      "recognized_text": "ничьих не требуя похвал счастлив уж я надеждой сладкой что дева с трепетом любви посмотрит может быть украдкой на песни грешные мои у лукоморья дуб зеленый"
+    },
+    "fake_streaming": {
+      "simulated_seconds": 7200,
+      "inference_windows": 1029,
+      "maximum_pending_seconds": 12,
+      "configured_bound_seconds": 48,
+      "peak_parallel_inference": 1,
+      "pending_after_stop_seconds": 0,
+      "language_quality_claim": false
+    },
+    "synthetic_exports": {
+      "formats": [
+        "TXT",
+        "MD",
+        "DOCX",
+        "PDF"
+      ],
+      "unicode_and_repeated_words": "passed",
+      "existing_files_preserved": true,
+      "language_quality_claim": false
+    },
+    "total_elapsed_seconds": 24.719
+  },
+  "pending_checks": [
+    "Final published ZIP SHA256, manifest and CRC validation at packaging",
+    "Real WASAPI microphone capture in the new application",
+    "Real WASAPI system loopback capture and both sources together",
+    "Real Kazakh speech and natural multilingual/code-switching conversation",
+    "Live Russian/English/Kazakh speech quality on selected hardware",
+    "Long physical capture session with real inference and GUI",
+    "Physically network-isolated operating-system run",
+    "Clean Windows VM without separately installed Python"
+  ],
+  "limitations": [
+    "No full acoustic echo cancellation or speaker diarization",
+    "Selected playback-device capture includes all applications; no per-process capture",
+    "Python socket guard and endpoint sampling do not certify OS-level network isolation",
+    "Fake long-session checks do not certify physical capture or long-session GUI memory"
+  ],
+  "real_streaming_validation": {
+    "evidence_name": "verification/real-streaming-pcm.json",
+    "status": "passed",
+    "hardware_capture_tested": false,
+    "real_time_performance_tested": false,
+    "fixture_sha256": "d8aaaa18a5098d7c6de0595ae7ac1e64cacd0d4022af3595213bdaf23be77e69",
+    "input_duration_seconds_per_source": 11.29,
+    "sample_rates": {
+      "microphone": 16000,
+      "system": 48000
+    },
+    "window_seconds": 8,
+    "overlap_seconds": 1,
+    "source_text_matches": {
+      "microphone": true,
+      "system": true
+    },
+    "word_counts": {
+      "microphone": 26,
+      "system": 26
+    },
+    "shared_timeline_valid": true,
+    "automatic_idle_flush_before_stop": true,
+    "maximum_pending_seconds": 24.58,
+    "configured_bound_seconds": 48.0,
+    "pending_after_stop_seconds": 0.0,
+    "rejected_blocks": 0,
+    "fault_count": 0,
+    "progress_updates": 4,
+    "last_progress_pending_seconds": 0.0,
+    "accelerated_stream_phase_seconds": 6.563,
+    "total_elapsed_seconds": 35.601,
+    "blocked_python_network_attempts": 0,
+    "reviewed_source_sha256": {
+      "engine.py": "46f21075436625fe5faf1cfe18dfe7743c718b0c90143b1e9ed4d1a4436d5bec",
+      "streaming.py": "1fa1fa171e25ade98c5551ac97d4cffdf7b9faed719b1e81555eefbbc7931d14",
+      "selftest.py": "0e6ef385f95c9c9a6f255b55321ea1a43d2a1eb049dc12623c243b1a08ca4ef8",
+      "offline.py": "eeafac59598471af44ff8ac34fb12a5e96e0f06be5fe52c56b650efc9289ebda"
+    },
+    "seam_fix_class": "Ordered full-context time alignment for independently shifted CTC word timestamps; real neighboring and nonoverlap phrase repetitions retained"
+  },
+  "public_language_validation": {
+    "evidence_name": "verification/public-language-evaluation.json",
+    "scope": "One public read-speech clip per RU/EN; synthetic RU+EN concatenation; not natural multilingual conversation or hardware capture",
+    "kazakh_tested": false,
+    "natural_code_switching_tested": false,
+    "physical_capture_tested": false,
+    "wer_method": "Word edit distance after pinned upstream gigaam.utils.normalize_raw_text and split",
+    "english_source": "https://huggingface.co/datasets/hf-internal-testing/librispeech_asr_dummy/tree/5be91486e11a2d616f4ec5db8d3fd248585ac07a",
+    "english_license": "CC BY 4.0, LibriSpeech/OpenSLR12, Vassil Panayotov et al.; underlying LibriVox books public domain",
+    "english_wav_sha256": "799f78ed4beb4de7ceae3a809262d4ce242394342ccd1d58cef7d49dbc2def46",
+    "samples": [
+      {
+        "language": "ru",
+        "reference_words": 26,
+        "word_edits": 0,
+        "wer": 0.0,
+        "duration_seconds": 11.29,
+        "inference_seconds": 2.894
+      },
+      {
+        "language": "en",
+        "reference_words": 17,
+        "word_edits": 0,
+        "wer": 0.0,
+        "duration_seconds": 5.855,
+        "inference_seconds": 1.327
+      },
+      {
+        "language": "synthetic_ru_en",
+        "reference_words": 43,
+        "word_edits": 1,
+        "wer": 0.0233,
+        "duration_seconds": 17.495,
+        "inference_seconds": 3.377
+      }
+    ],
+    "synthetic_mixed_streaming": {
+      "word_edits": 1,
+      "reference_words": 43,
+      "wer": 0.0233,
+      "pending_after_stop": 8.881784197001252e-16,
+      "warnings": []
+    },
+    "streaming_pending_is_floating_point_roundoff": true,
+    "blocked_python_network_attempts": 0
+  },
+  "frozen_runtime_validation": {
+    "status": "passed",
+    "frozen": true,
+    "python": "3.12.3",
+    "public_fixture_exact_match": true,
+    "public_fixture_word_count": 26,
+    "elapsed_seconds": 36.461,
+    "blocked_python_network_attempts": 0,
+    "sanitized_windows_path_tested": true,
+    "network_pid_snapshots": 51,
+    "tcp_endpoint_observations": 0,
+    "udp_endpoint_observations": 0,
+    "exit_code": 0,
+    "physical_network_disconnection_tested": false,
+    "clean_python_free_vm_tested": false,
+    "current_source_bytecode_attestation": "passed",
+    "source_file_count": 13,
+    "source_attestation_method": "Python bytecode/constants, exception tables, stack sizes and names compared; debug paths/line tables excluded",
+    "current_source_sha256_matches": true,
+    "evidence_names": [
+      "frozen-selftest.json",
+      "runtime-network-audit.json",
+      "frozen-source-match.json"
+    ]
+  },
+  "pe_dependency_validation": {
+    "status": "passed",
+    "pe_files_audited": 126,
+    "missing_dependencies": 0,
+    "method": "PE import and delay-import dependencies",
+    "archive_crc_validation_claimed": false
+  }
+}
