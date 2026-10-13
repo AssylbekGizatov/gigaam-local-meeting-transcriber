@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from gigaam_meeting.audio import AudioCaptureError
-from gigaam_meeting.contracts import AudioBlock, AudioDevice, Segment, SessionConfig
+from gigaam_meeting.contracts import AudioBlock, AudioDevice, Segment, SessionConfig, Word
 from gigaam_meeting.engine import EngineError
 from gigaam_meeting.session import SessionManager
 import gigaam_meeting.session as session_module
@@ -15,6 +15,39 @@ import gigaam_meeting.session as session_module
 
 MIC = AudioDevice(1, "Fake microphone", "microphone", 16000, 1, fingerprint="mic")
 SYSTEM = AudioDevice(2, "Fake headphones", "system", 48000, 2, fingerprint="system")
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_session_echo_edits_and_toggle_keep_capture_pcm_and_tail(harness, monkeypatch, enabled):
+    from dataclasses import replace
+    from gigaam_meeting.echo import EchoAudioHistory
+    manager, _, captures, processors, events, config, _ = harness
+    # Acoustic detector has separate real/synthetic PCM checks in test_echo.
+    # This test establishes end-to-end session/event/stop routing independently.
+    monkeypatch.setattr(EchoAudioHistory, "matches", lambda *args: True)
+    manager.start(replace(config, reduce_echo=enabled))
+    wait_until(lambda: manager.state == "recording")
+    values = np.linspace(-.2, .2, 640, dtype=np.float32)
+    original = values.copy()
+    captured = AudioBlock("microphone", values, 16000, 0)
+    captures[-1].on_block(captured)
+    assert processors[-1].blocks[-1] is captured and np.array_equal(values, original)
+    words = tuple(Word(1 + i * .3, 1.2 + i * .3, token) for i, token in enumerate(["today", "we", "test"]))
+    manager._segment(Segment("microphone", 1, 1.8, "today we test", words))
+    manager._segment(Segment("system", 1, 1.8, "today we test", words))
+    spoken = [s for s in manager.segments if s.text == "today we test"]
+    assert [s.source for s in spoken] == (["system"] if enabled else ["microphone", "system"])
+    delivered = events_from(events)
+    assert any(e.kind == "echo_update" for e in delivered) == enabled
+    if enabled:
+        history = manager._echo
+    manager.stop()
+    wait_until(lambda: manager.state == "idle")
+    assert any(s.text == "fake recognition" for s in manager.segments)
+    assert manager._echo is None
+    if enabled:
+        assert not history._microphone and not history._system
+        assert all(not a.any() for a in history.audio._values.values())
 
 
 def wait_until(condition, timeout=3):

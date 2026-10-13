@@ -61,7 +61,7 @@ def catalog_ready(app, manager, events):
     assert not app.enumerating
 
 
-CASES = ["catalog", "consent", "preview", "stopping", "safe_error", "close", "worker_lifetime"]
+CASES = ["catalog", "consent", "preview", "stopping", "safe_error", "close", "worker_lifetime", "echo"]
 
 
 @pytest.mark.parametrize("case", CASES)
@@ -167,6 +167,39 @@ def run_case(case):
                 assert not manager.starts and not manager.previews
             finally:
                 root.destroy = destroy_root
+        elif case == "echo":
+            from gigaam_meeting.contracts import Segment
+            catalog_ready(app, manager, events)
+            before = Segment("microphone", 0, .5, "before")
+            duplicated = Segment("microphone", 1, 5, "echo and local reply")
+            after = Segment("microphone", 8, 9, "after")
+            reference = Segment("system", 1.1, 3, "echo")
+            local = Segment("microphone", 4, 5, "local reply")
+            for segment in (before, duplicated, after):
+                events.put(Event("segment", data={"segment": segment}))
+            events.put(Event("echo_update", data={"removed": [duplicated], "added": [reference, local]}))
+            events.put(Event("echo_stats", data={"hidden_words": 3}))
+            app._poll()
+            assert app.segments == [before, reference, local, after]
+            text = app.transcript.get("1.0", "end")
+            assert "echo and local reply" not in text
+            assert text.index("before") < text.index("echo") < text.index("local reply") < text.index("after")
+            assert len(app.segment_marks) == 4 and app.dirty
+            assert app.echo_status.get().endswith("3 слов")
+            # Removal of the last segment must not leave a stale header or mark.
+            app._echo_update([after], [])
+            assert "after" not in app.transcript.get("1.0", "end") and len(app.segment_marks) == 3
+            app.combos["microphone"].current(1)
+            app.combos["system"].current(1)
+            app.consent.set(True)
+            app.reduce_echo.set(False)
+            app.dirty = False
+            app._start()
+            assert not manager.starts[-1].reduce_echo
+            assert str(app.echo_check["state"]) == "disabled"
+            events.put(Event("finished"))
+            app._poll()
+            assert str(app.echo_check["state"]) == "normal"
         elif case == "worker_lifetime":
             # A catalog worker may outlive window close, but must not retain Tk.
             reference = weakref.ref(app)

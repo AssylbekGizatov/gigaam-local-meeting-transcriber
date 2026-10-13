@@ -56,6 +56,8 @@ class MeetingApp:
         root.protocol("WM_DELETE_WINDOW", self._close_requested)
         self.consent = tk.BooleanVar(value=False)
         self.save_audio = tk.BooleanVar(value=False)
+        self.reduce_echo = tk.BooleanVar(value=True)
+        self.echo_status = tk.StringVar(value="Подтверждённые повторы в микрофоне: 0 слов")
         self.folder = tk.StringVar(value=str(Path.home() / "GigaAM" / "transcripts"))
         self.format = tk.StringVar(value="TXT")
         self.status = tk.StringVar(value=STATE_LABELS["idle"])
@@ -183,6 +185,13 @@ class MeetingApp:
         status_box.grid(row=5, column=0, sticky="ew")
         self.notice_label = ttk.Label(status_box, textvariable=self.notice, wraplength=970)
         self.notice_label.pack(anchor="w", pady=(6, 4))
+        self.echo_check = ttk.Checkbutton(status_box, variable=self.reduce_echo,
+            text="Убирать подтверждённые дубли динамиков из текста микрофона (для следующего сеанса)")
+        self.echo_check.pack(anchor="w", pady=(0, 4))
+        ttk.Label(status_box, text="При двух источниках сравниваются слова, время и звук. Дубль может исчезнуть после обработки второго канала. "
+                  "Микрофон не отключается; исходные аудиофайлы не очищаются от эха.",
+                  wraplength=970, foreground="#555555").pack(anchor="w", pady=(0, 4))
+        ttk.Label(status_box, textvariable=self.echo_status, foreground="#555555").pack(anchor="w", pady=(0, 4))
         ttk.Label(status_box, text="Фрагменты появляются с задержкой. Таймкоды приблизительные; "
                   "«Микрофон» и «Звук компьютера» — источники, а не имена людей.",
                   wraplength=970, foreground="#555555").pack(anchor="w", pady=(0, 7))
@@ -287,7 +296,7 @@ class MeetingApp:
         except ValueError as exc:
             messagebox.showwarning("Нужна локальная папка", str(exc), parent=self.root)
             return None
-        return SessionConfig(microphone, system, True, folder, self.save_audio.get())
+        return SessionConfig(microphone, system, True, folder, self.save_audio.get(), self.reduce_echo.get())
 
     def _preview(self):
         config = self._config()
@@ -329,6 +338,7 @@ class MeetingApp:
             self.segment_marks.clear()
         self.transcript.configure(state="disabled")
         self.saved_status.set("Ожидаем распознавание")
+        self.echo_status.set("Подтверждённые повторы в микрофоне: 0 слов")
         self.capture_sources = " + ".join(SOURCE_LABELS[source] for source, device in (("microphone", config.microphone), ("system", config.system)) if device)
         self.notice.set("Модель загружается с локального диска. Первый запуск может занять время.")
         self._set_state("loading")
@@ -377,7 +387,7 @@ class MeetingApp:
         editing = not active and not self.exporting and not self.closing and not self.enumerating
         for combo in self.combos.values():
             combo.configure(state="readonly" if editing else "disabled")
-        for widget in (self.refresh_button, self.preview_button, self.consent_check, self.folder_entry, self.folder_button, self.audio_check, self.start_button):
+        for widget in (self.refresh_button, self.preview_button, self.consent_check, self.folder_entry, self.folder_button, self.audio_check, self.echo_check, self.start_button):
             widget.configure(state="normal" if editing else "disabled")
         self.pause_button.configure(text="Продолжить" if state == "paused" else "Пауза", state="normal" if state in {"recording", "paused"} and not self.closing else "disabled")
         self.stop_button.configure(state="normal" if state in {"loading", "starting", "preview", "recording", "paused"} and not self.closing else "disabled")
@@ -412,6 +422,27 @@ class MeetingApp:
         self.transcript.configure(state="disabled")
         if follow:
             self.transcript.see("end")
+        self._set_state(self.state)
+
+    def _echo_update(self, removed, added):
+        # Edit only affected text ranges, never repaint the entire long session.
+        self.transcript.configure(state="normal")
+        for segment in removed:
+            if segment not in self.segments:
+                continue
+            index = self.segments.index(segment)
+            mark = self.segment_marks[index]
+            end = self.segment_marks[index + 1] if index + 1 < len(self.segment_marks) else "end-1c"
+            self.transcript.delete(mark, end)
+            self.transcript.mark_unset(mark)
+            self.segments.pop(index)
+            self.segment_marks.pop(index)
+            self.revision += 1
+            self.dirty = True
+        self.transcript.configure(state="disabled")
+        for segment in added:
+            self._append(segment)
+        self.saved_status.set("Есть несохранённый текст")
         self._set_state(self.state)
 
     def _export(self):
@@ -468,7 +499,7 @@ class MeetingApp:
                 state = event.data.get("state", "idle")
                 self._set_state(state)
                 if state == "recording":
-                    self.notice.set("Распознаём отдельные фрагменты. Используйте наушники: акустическое эхоподавление не выполняется.")
+                    self.notice.set("Распознаём отдельные фрагменты. Наушники уменьшают попадание динамиков в микрофон; фильтр дублей не заменяет акустическое эхоподавление.")
             elif event.kind == "level":
                 source = event.data.get("source")
                 if source in self.levels and self.state in {"recording", "preview"}:
@@ -476,6 +507,10 @@ class MeetingApp:
                     self.levels[source]["value"] = max(0, min(100, float(event.data.get("level", 0)) * 100))
             elif event.kind == "segment":
                 self._append(event.data["segment"])
+            elif event.kind == "echo_update":
+                self._echo_update(event.data["removed"], event.data["added"])
+            elif event.kind == "echo_stats":
+                self.echo_status.set(f"Подтверждённые повторы в микрофоне: {int(event.data['hidden_words'])} слов")
             elif event.kind == "lag":
                 pending = max(0, float(event.data.get("pending_seconds", 0)))
                 self.lag.set(f"В очереди {pending:.1f} сек" if pending else "Очередь пуста")

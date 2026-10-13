@@ -6,6 +6,7 @@ from time import perf_counter
 from .audio import AudioCaptureError, CaptureGroup, list_devices
 from .contracts import Event
 from .engine import EngineError, Transcriber
+from .echo import EchoDuplicateFilter
 from .recording import AudioRecorder
 from .streaming import StreamProcessor
 from .storage import validate_local_path
@@ -28,6 +29,7 @@ class SessionManager:
         self._stop_pending = False
         self._closed = False
         self._error = None
+        self._echo = None
 
     def _event(self, kind, message="", **data):
         self.events.put(Event(kind, message, data))
@@ -58,6 +60,7 @@ class SessionManager:
         with self._lock:
             self._reserve(config, "loading")
             self.segments = []
+            self._echo = EchoDuplicateFilter() if config.reduce_echo and config.microphone and config.system else None
             self._executor.submit(self._start, config)
 
     def _start(self, config):
@@ -121,6 +124,9 @@ class SessionManager:
 
     def _block(self, block):
         # Already captured owned blocks are accepted during pause/stop draining.
+        echo = self._echo
+        if echo:
+            echo.feed(block)
         if self._processor:
             self._processor.feed(block)
         if self._recorder:
@@ -137,10 +143,20 @@ class SessionManager:
             self._event("level", source=source, level=value)
 
     def _segment(self, segment):
+        removed, added = self._echo.accept(segment) if self._echo else ([], [segment])
         with self._lock:
-            self.segments.append(segment)
+            for old in removed:
+                if old in self.segments:
+                    self.segments.remove(old)
+            self.segments.extend(added)
             self.segments.sort(key=lambda s: (s.start, s.end, s.source))
-        self._event("segment", segment=segment)
+        if removed:
+            self._event("echo_update", removed=removed, added=added)
+        else:
+            for item in added:
+                self._event("segment", segment=item)
+        if self._echo:
+            self._event("echo_stats", hidden_words=self._echo.hidden_words)
 
     def _status(self, kind, data):
         if kind == "progress":
@@ -209,6 +225,9 @@ class SessionManager:
                         self._error = self._error or "Ошибка завершения сеанса. Полученный текст доступен для экспорта."
         finally:
             with self._lock:
+                if self._echo:
+                    self._echo.clear()
+                    self._echo = None
                 self._capture = self._processor = self._recorder = None
                 self._event("lag", pending_seconds=0)
                 self._state("error" if self._error else "idle")

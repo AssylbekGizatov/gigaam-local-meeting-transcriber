@@ -18,7 +18,8 @@ import zipfile
 
 import numpy as np
 
-from .contracts import AudioBlock, Segment
+from .contracts import AudioBlock, Segment, Word
+from .echo import EchoDuplicateFilter
 from .engine import CODE_REVISION, MODEL_FILES, MODEL_REVISION, Transcriber, verify_model
 from .exports import EXPORT_FORMATS, export_transcript
 from .streaming import StreamProcessor
@@ -89,11 +90,49 @@ def _public_inference(root: Path) -> dict:
         previous_start = word.start
     if not words:
         raise ValueError("public_fixture_empty_transcript")
+    echo = _public_echo(transcriber, samples, rate, words)
     return {"fixture_sha256": FIXTURE_SHA256, "fixture_source": FIXTURE_SOURCE,
             "duration_seconds": duration, "inference_seconds_including_load": round(elapsed, 3),
             "recognized_text": text, "expected_text_matches": True,
-            "word_count": len(words), "word_timestamps_valid": True,
+            "word_count": len(words), "word_timestamps_valid": True, "echo": echo,
             "scope": "One public Russian fixture; Kazakh/English/mixed ASR and physical capture are not verified by this check."}
+
+
+def _public_echo(transcriber, samples, rate, reference_words):
+    # Reuse the actual loaded local model, with a public PCM recording only.
+    # This simulates a scaled 120ms speaker leak; it is not a hardware/AEC test.
+    reference = np.r_[np.zeros(round(.5 * rate), np.float32), samples,
+                      np.zeros(rate, np.float32)]
+    microphone = np.r_[np.zeros(round(.62 * rate), np.float32), samples * np.float32(.3),
+                       np.zeros(round(.88 * rate), np.float32)]
+    local_words = transcriber.transcribe_words(microphone, rate)
+    if not local_words:
+        raise ValueError("public_echo_reduction_failed")
+    system_words = tuple(Word(w.start + .5, w.end + .5, w.text) for w in reference_words)
+    reducer = EchoDuplicateFilter()
+    for source, pcm in (("system", reference), ("microphone", microphone)):
+        for offset in range(0, len(pcm), round(.04 * rate)):
+            reducer.feed(AudioBlock(source, pcm[offset:offset + round(.04 * rate)], rate, offset / rate))
+    local = Segment("microphone", local_words[0].start, local_words[-1].end,
+                    " ".join(w.text for w in local_words), tuple(local_words))
+    system = Segment("system", system_words[0].start, system_words[-1].end,
+                     " ".join(w.text for w in system_words), system_words)
+    transcript = []
+    for segment in (local, system):
+        removed, added = reducer.accept(segment)
+        for old in removed:
+            transcript.remove(old)
+        transcript.extend(added)
+    if reducer.hidden_words < math.floor(len(reference_words) * .75):
+        raise ValueError("public_echo_reduction_failed")
+    if " ".join(s.text for s in transcript if s.source == "system") != EXPECTED_TEXT:
+        raise ValueError("public_echo_reference_changed")
+    result = {"scope": "Actual GigaAM decoding of public PCM plus synthetic scaled/delayed microphone echo; no physical capture",
+              "delay_seconds": .12, "microphone_gain": .3, "reference_words": len(reference_words),
+              "recognized_microphone_words": len(local_words), "microphone_duplicate_words_removed": reducer.hidden_words,
+              "system_reference_unchanged": True, "pcm_history_bytes": reducer.audio.memory_bytes}
+    reducer.clear()
+    return result
 
 
 class _CounterModel:
@@ -219,6 +258,7 @@ def run_self_test(bundle_root: Path | str, report_path: Path | str) -> dict:
                       "public_fixture_empty_transcript", "synthetic_stream_unexpected_drop",
                       "synthetic_stream_drain_timeout", "synthetic_stream_bounds_failed",
                       "synthetic_unicode_text_export_mismatch", "synthetic_unicode_docx_export_mismatch",
+                      "public_echo_reduction_failed", "public_echo_reference_changed",
                       "synthetic_pdf_embedded_font_missing", "export_overwrite_not_blocked", "existing_export_changed"}
         if len(error.args) == 1 and isinstance(error.args[0], str) and error.args[0] in safe_codes:
             report["error"]["code"] = error.args[0]

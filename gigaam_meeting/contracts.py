@@ -42,6 +42,7 @@ class Segment:
     start: float
     end: float
     text: str
+    words: tuple[Word, ...] = field(default=(), compare=False, repr=False)
 
 
 @dataclass(frozen=True)
@@ -51,6 +52,7 @@ class SessionConfig:
     consent: bool
     output_folder: Path
     save_audio: bool = False
+    reduce_echo: bool = True
 
 
 @dataclass(frozen=True)

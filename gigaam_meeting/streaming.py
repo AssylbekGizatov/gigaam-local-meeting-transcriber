@@ -1,8 +1,8 @@
 """Bounded, per-source PCM windows and one offline inference worker.
 
-No diarization or acoustic echo cancellation is performed. Microphone and
-loopback stay separate, including if they happen to hear the same loudspeaker.
-Words belong to disjoint time ranges; text alone never triggers deduplication.
+No diarization or acoustic echo cancellation is performed here. Microphone and
+loopback stay separate. Optional transcript echo reduction runs in the session
+layer with explicit cross-source PCM evidence; text alone is insufficient.
 """
 from __future__ import annotations
 
@@ -365,6 +365,6 @@ class StreamProcessor:
             context.append(_ContextWord(word, already_confirmed or owns))
         if selected:
             self.emit_segment(Segment(window.source, selected[0].start, selected[-1].end,
-                                      " ".join(word.text for word in selected)))
+                                      " ".join(word.text for word in selected), tuple(selected)))
         recent.clear()
         recent.extend(context)

@@ -9,7 +9,7 @@ on:
       tag:
         description: New release tag (must not already exist)
         type: string
-        default: v0.1.1
+        default: v0.1.2
 permissions:
   contents: write
 jobs:

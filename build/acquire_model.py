@@ -1,6 +1,7 @@
 """Build-time HTTPS acquisition only. Never imported by the desktop application."""
 import argparse
 import hashlib
+import json
 from pathlib import Path
 import shutil
 import tempfile
@@ -43,6 +44,19 @@ def acquire(directory):
             digest = hashlib.file_digest(stream, "sha256").hexdigest()
         if digest != expected:
             raise RuntimeError(f"Existing {name} failed SHA256; never overwrite it silently")
+    provenance = directory / "provenance.json"
+    record = {"backend": "gigaam", "repository": "ai-sage/GigaAM-Multilingual", "revision": REVISION,
+              "code_revision": CODE_REVISION, "license": "MIT", "sha256": FILES,
+              "model_card": f"https://huggingface.co/ai-sage/GigaAM-Multilingual/blob/{REVISION}/README.md",
+              "artifact_sources": {name: artifact_url(name) for name in FILES}}
+    if provenance.exists():
+        current = json.loads(provenance.read_text(encoding="utf-8"))
+        if any(current.get(key) != record[key] for key in ("repository", "revision", "code_revision", "sha256")):
+            raise RuntimeError("Existing model provenance differs from verified pins; never overwrite it silently")
+    else:
+        with provenance.open("x", encoding="utf-8") as output:
+            json.dump(record, output, indent=2)
+            output.write("\n")
 
 
 def main():

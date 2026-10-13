@@ -183,8 +183,11 @@ def main():
         for name in ("config.json", "pytorch_model.bin"):
             if model.get("sha256", {}).get(name) != verified.get(name):
                 raise RuntimeError("Model provenance does not match the final frozen-model hashes")
-        model["artifact_sources"] = {name: "https://huggingface.co/" + model["repository"] + "/resolve/" + model["revision"] + "/" + name
-                                     for name in model["sha256"]}
+        model["artifact_sources"] = {name: (
+            "https://raw.githubusercontent.com/salute-developers/GigaAM/" + model["code_revision"] + "/LICENSE"
+            if name == "LICENSE" else
+            "https://huggingface.co/" + model["repository"] + "/resolve/" + model["revision"] + "/" + name)
+            for name in model["sha256"]}
         payloads["model-acquisition.json"] = json_bytes(model)
     payloads["deployment-limits.json"] = json_bytes(LIMITS)
     payloads["evidence-index.json"] = json_bytes({"scope": "Explicit current report whitelist; no raw build-tree merge",
