@@ -21,6 +21,7 @@ CAPTURE_NOTE = "Захватывается звук выбранного уст�
 DEVICE_CHANGE_NOTE = "При отключении устройства запись останавливается. После смены устройств обновите список и подтвердите выбор: автоматического переключения нет."
 MAX_CALLBACK_FRAMES = 8192
 MAX_QUEUED_BLOCKS = 32
+ADC_TIMESTAMP_JITTER_SECONDS = 0.02
 
 
 class AudioCaptureError(RuntimeError):
@@ -147,6 +148,24 @@ class CaptureGroup:
                 start = adc + clock.offset - self.clock_origin
                 if start < -1 or start > perf_counter() - self.clock_origin + 1:
                     raise ValueError("unusable ADC clock")
+                discontinuity = clock.discontinuity
+                if clock.previous_end is not None:
+                    delta = start - clock.previous_end
+                    # WASAPI's estimated ADC timestamps can jitter even when
+                    # callback PCM is ordered and distinct. v0.1.0 accepted
+                    # 20ms here but passed the overlap to a 2ms downstream
+                    # guard, causing a false fatal error. Keep every sample
+                    # and advance by its exact frame count inside this bounded
+                    # range. Genuine larger gaps stay explicit; larger clock
+                    # reversals/driver overflow still stop capture.
+                    jitter_limit = ADC_TIMESTAMP_JITTER_SECONDS + 2 / device.sample_rate
+                    if delta < -jitter_limit:
+                        self._fault(f"{label}: часы аудиоустройства сбились. Запись остановлена.")
+                        return None, module.paAbort
+                    if abs(delta) <= jitter_limit:
+                        start = clock.previous_end
+                    else:
+                        discontinuity = True
                 samples = np.frombuffer(data, dtype="<i2").reshape(frame_count, device.channels).astype(np.float32)
                 samples *= np.float32(1 / 32768)
                 if start < 0:
@@ -155,16 +174,6 @@ class CaptureGroup:
                     start += trim / device.sample_rate
                 if not len(samples):
                     return None, module.paContinue
-                discontinuity = clock.discontinuity
-                if clock.previous_end is not None:
-                    delta = start - clock.previous_end
-                    if delta < -0.02:
-                        self._fault(f"{label}: часы аудиоустройства сбились. Запись остановлена.")
-                        return None, module.paAbort
-                    if abs(delta) <= 2 / device.sample_rate:
-                        start = clock.previous_end
-                    else:
-                        discontinuity = True
                 clock.previous_end = start + len(samples) / device.sample_rate
                 clock.discontinuity = False
                 if self._cancelled():

@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 from gigaam_meeting import audio
+from gigaam_meeting.streaming import StreamProcessor
 
 
 def wait_for(predicate, timeout=2):
@@ -299,6 +300,98 @@ def test_timestamp_calibration_does_not_drift_with_delivery_latency(fake):
         wait_for(lambda: len(blocks) == 2)
         assert [b.start for b in blocks] == pytest.approx([1.0, 1.01])
         assert not blocks[1].discontinuity
+    finally:
+        capture.stop()
+
+
+def test_capture_to_streaming_keeps_all_pcm_through_small_adc_jitter(fake):
+    """Actual capture adapter -> actual processor, with independent ADC clocks.
+
+    v0.1.0 allowed 6ms overlap here but the next layer rejected it at 2ms.
+    These callbacks contain different, ordered PCM; none may be lost/replayed.
+    """
+    factory, now = fake
+    calls, statuses, accepted = [], [], []
+
+    class PCMModel:
+        def transcribe_words(self, pcm, rate):
+            calls.append((rate, pcm.copy()))
+            return []
+
+    processor = StreamProcessor(PCMModel(), lambda segment: None,
+                                lambda kind, data: statuses.append(kind))
+    def feed(block):
+        accepted.append(processor.feed(block))
+    capture, blocks, errors, _ = group(fake, on_block=feed)
+    processor.start()
+    try:
+        capture.start()
+        jitters = [0, -.006, .008, -.010, .007, -.009, .005, -.002]
+        for index, jitter in enumerate(jitters):
+            now[0] = 100 + index * .04
+            for stream in factory.streams:
+                rate, channels = stream.kwargs['rate'], stream.kwargs['channels']
+                samples = np.full((round(rate * .04), channels), 1000 + index, dtype='<i2')
+                assert stream.emit(samples, adc=stream.get_time() + index * .04 + jitter)[1] == factory.paContinue
+        capture.stop()
+        processor.stop()
+        assert len(accepted) == len(jitters) * 2 and all(accepted)
+        assert not errors and 'capture_timestamp' not in statuses
+        assert 'discontinuity' not in statuses
+        for rate in (44100, 48000):
+            actual = np.concatenate([pcm for recorded_rate, pcm in calls if recorded_rate == rate])
+            expected = np.concatenate([np.full(round(rate * .04), (1000 + i) / 32768, dtype=np.float32)
+                                       for i in range(len(jitters))])
+            np.testing.assert_array_equal(actual, expected)
+        assert not blocks and processor.pending_seconds == 0
+    finally:
+        capture.stop()
+        processor.stop()
+
+
+def test_real_loopback_silence_gap_is_not_collapsed(fake):
+    factory, now = fake
+    capture, blocks, errors, _ = group(fake, sources=("system",))
+    try:
+        capture.start()
+        stream = factory.streams[-1]
+        stream.emit([[100, 200]] * 1920, adc=8000.0)
+        now[0] = 101.0
+        stream.emit([[300, 400]] * 1920, adc=8001.0)
+        capture.stop()
+        assert [b.start for b in blocks] == pytest.approx([1.0, 2.0])
+        assert blocks[-1].discontinuity and not errors
+        assert [len(b.samples) for b in blocks] == [1920, 1920]
+    finally:
+        capture.stop()
+
+
+def test_large_clock_reversal_still_aborts(fake):
+    factory, _ = fake
+    capture, _, errors, _ = group(fake, sources=("microphone",))
+    try:
+        capture.start()
+        stream = factory.streams[-1]
+        stream.emit([[100]] * 1764, adc=5000.0)
+        assert stream.emit([[200]] * 1764, adc=4999.99)[1] == factory.paAbort
+        wait_for(lambda: len(errors) == 1)
+        assert 'часы' in errors[0]
+    finally:
+        capture.stop()
+
+
+def test_jitter_near_origin_preserves_later_pcm_instead_of_trimming(fake):
+    factory, _ = fake
+    capture, blocks, errors, _ = group(fake, sources=("microphone",))
+    try:
+        capture.start()
+        stream = factory.streams[-1]
+        stream.emit([[100]] * 441, adc=4999.005)
+        stream.emit([[200]] * 441, adc=4998.995)
+        capture.stop()
+        assert len(blocks) == 2 and not errors
+        assert [len(b.samples) for b in blocks] == [441, 441]
+        assert blocks[1].start == pytest.approx(blocks[0].start + .01)
     finally:
         capture.stop()
 

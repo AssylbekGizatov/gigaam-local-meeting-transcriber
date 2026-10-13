@@ -17,7 +17,7 @@ import zipfile
 
 ROOT_FILES = (
     "app.py", "requirements-runtime.txt", "requirements-build.txt", "GigaAM-Meeting.spec",
-    "LICENSE", "NOTICE.md", "README.md", ".gitignore",
+    "LICENSE", "NOTICE.md", "README.md", ".gitignore", "CHANGELOG.md",
 )
 BINARY_HASHES = {
     "fonts/DejaVuSans.ttf": "3fdf69cabf06049ea70a00b5919340e2ce1e6d02b0cc3c4b44fb6801bd1e0d22",

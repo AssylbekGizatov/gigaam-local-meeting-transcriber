@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from typing import Callable, Any
 
+from . import __version__
 from .contracts import AudioDevice, Event, Segment, SessionConfig, SOURCE_LABELS
 from .audio import AudioCaptureError
 from .exports import EXPORT_FORMATS, default_export_name, export_transcript, format_time
@@ -49,7 +50,7 @@ class MeetingApp:
         self.level_seen = {}
         self.session_error: str | None = None
         self.session_warning: str | None = None
-        root.title("GigaAM — локальная транскрипция звонка")
+        root.title(f"GigaAM {__version__} — локальная транскрипция звонка")
         root.geometry(f"1040x{min(960, root.winfo_screenheight() - 85)}")
         root.minsize(850, min(650, root.winfo_screenheight() - 85))
         root.protocol("WM_DELETE_WINDOW", self._close_requested)
