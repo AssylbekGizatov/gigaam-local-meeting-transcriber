@@ -1,39 +1,62 @@
-# GigaAM — локальная транскрипция звонка
+# GigaAM Local Meeting Transcriber
 
-**v0.1.2 добавляет отключаемый фильтр дублей динамиков в тексте микрофона.** Он требует совпадения слов, времени и самого звука; собственная речь не выключается. Использование и ограничения: [ECHO.md](docs/ECHO.md). Исправление часов WASAPI из [v0.1.1](docs/HOTFIX-v0.1.1.md) сохранено. Версия показана в заголовке окна.
+Portable **Windows x64** application with a Russian interface. Transcribe your microphone and the audio playing through your selected output device while you are already in a Teams, Zoom, or other call. WASAPI loopback works with headphones without a virtual audio cable.
 
-Переносимое приложение Windows x64 с русским интерфейсом. Вы уже участвуете в звонке; приложение получает звук выбранного микрофона и устройства воспроизведения через WASAPI loopback. Работает с наушниками без виртуального аудиокабеля.
+The application does not join meetings or create a participant. It uses no meeting accounts, Teams/Zoom SDKs or APIs, Vexa, Docker, cloud speech recognition, or external LLMs. The model and runtime load from local disk. Missing model files produce an error instead of a download.
 
-**Приложение не входит во встречи и не создаёт участника.** Аккаунты, SDK/API Teams/Zoom, Vexa, Docker, облачный STT и внешние LLM не используются. Во время работы модель и зависимости загружаются с локального диска. Доступ Python к сети заблокирован внутри процесса; это не замена системному контролю сети — границы проверки описаны в [приватности](docs/PRIVACY.md).
+**Current release: [v0.1.2](https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/releases/tag/v0.1.2).** This version adds an optional conservative filter for speaker audio repeated in the microphone transcript. It requires matching words, timing, and audio correlation; it does not mute the microphone or alter recorded audio. One user test confirmed that duplicates disappeared and the user's own speech remained. See [echo filtering and limitations](docs/ECHO.md) and [test results](docs/TESTING.md). The WASAPI clock fix from [v0.1.1](docs/HOTFIX-v0.1.1.md) is retained.
 
-## Запуск готовой сборки
+## Start in three steps
 
-1. Скачайте `GigaAM-Meeting-windows-x64.zip` из Releases и **полностью распакуйте** ZIP в новую локальную папку. Сохраните структуру `_internal`, `models`, `fonts`, `licenses`.
-2. Откройте `GigaAM-Meeting.exe`. Выберите микрофон, устройство звука компьютера и папку экспорта. Проверьте, что программа звонка воспроизводит звук через выбранные наушники.
-3. Получите необходимые согласия участников, отметьте разрешение и нажмите «Начать». После «Остановить» дождитесь завершения обработки и сохраните TXT, MD, DOCX или PDF.
+1. Download **`GigaAM-Meeting-windows-x64.zip`** and its SHA256 file from the release. Verify the checksum and **extract the entire ZIP into a new local folder**. Keep `_internal`, `models`, `fonts`, `licenses`, and the other bundled files together.
+2. Open `GigaAM-Meeting.exe`. Choose your microphone, computer audio device, and export folder. Make sure your call plays through the selected output device. The level check also requires explicit capture consent.
+3. Obtain the necessary participant consent, check the capture permission box, and click **«Начать» (Start)**. Use **«Пауза» (Pause)** as needed. Click **«Остановить и завершить текст» (Stop and finish text)**, wait for processing to finish, and export TXT, MD, DOCX, or PDF.
 
-Python, pip, Git, Docker и терминал пользователю не нужны. SHA256 опубликован рядом с ZIP. Без модели приложение сообщает об ошибке и ничего не скачивает. Защиту Windows и правила организации изменять не требуется; при блокировке обратитесь к своему администратору.
+End users do not need Python, pip, Git, Docker, or a terminal. The GitHub **Source code** archives and `GigaAM-Meeting-source-…zip` are for developers; they are not the runnable application. Do not launch the EXE from inside the ZIP or copy only the EXE to another folder. Respect Windows security controls and organizational policy; contact your administrator if execution is blocked.
 
-## Что захватывается
+## Audio sources and consent
 
-«Звук компьютера» — **все приложения на выбранном устройстве воспроизведения**, включая уведомления. Захват отдельного приложения в этой версии отсутствует. Приложение не переключается на другие источники автоматически. При изменении устройства остановите сеанс, обновите список и подтвердите новый выбор. Перезапуск никогда не возобновляет запись.
+**Computer audio captures every application playing through the selected output device**, including notifications. Capturing a single application is not supported in this release. The application does not silently switch to another device. If a headset changes or disconnects, stop, refresh the device list, choose the new devices, and explicitly start a new session. Capture never starts automatically or resumes after restarting the application.
 
-Источники «Микрофон» и «Звук компьютера» используют общий таймер с паузами. Это **не определение людей**: имена и число собеседников не вычисляются. Фильтр подтверждённых дублей включён по умолчанию для двух источников и может быть отключён перед сеансом. Системный текст сохраняется, а подтверждённые повторные слова микрофона убираются из отображения и экспорта. Исходное аудио остаётся раздельным и неизменным. Полноценного акустического эхоподавления нет; рекомендуются наушники. При одновременной речи внутри одного источника точность ограничена.
+The two sources share a session clock that accounts for pauses. **“Microphone” and “Computer audio” identify audio sources, not individual speakers.** The application does not infer names or the number of participants.
 
-## Распознавание
+With both sources enabled, the duplicate filter is on by default and can be disabled before a session. Confirmed repeated microphone words are removed from display and export; the computer audio transcript and separate source audio remain intact. This is transcript filtering, not full acoustic echo cancellation. Short or ambiguous repetitions can remain. Overlapping voices within one source and quiet local speech under loud speaker audio can reduce accuracy. Headphones are recommended.
 
-Используется та же **GigaAM Multilingual 220M CTC**, без замены модели: локальный CPU float32, код `7447938d791c4f3e643386ee22c33777004293a5`, модель `2f8a57144e6ec3adfd32fe0484d9ea9913305bc8`. SHA256 конфигурации и весов проверяется перед загрузкой. Казахский, русский, английский и смешанная речь поддерживаются моделью; качество на ваших устройствах требует проверки.
+Windows microphone permission does not replace participant consent or organizational recording rules. Capture has a persistent visible indicator and requires an explicit user action for each session.
 
-Подтверждённые фрагменты появляются примерно после 8 секунд речи или паузы. Задержка зависит от CPU и двух источников; мгновенная точность не обещается. Окна имеют контекст на границе, подтверждение по таймкодам и ограниченную очередь 48 секунд аудио. При переполнении новые блоки пропускаются **с видимым предупреждением**, текст не выдумывается. После остановки очередь дозавершается. Короткие слова, шум, тишина, смена языка и границы фрагментов могут давать ошибки; проверьте текст перед использованием.
+## Speech recognition
 
-## Хранение
+The application retains **GigaAM Multilingual 220M CTC** with local CPU float32 inference:
 
-Аудиозапись выключена по умолчанию. Без неё PCM живёт только в ограниченных очередях памяти; временных аудиофайлов нет. Текст остаётся в памяти до явного экспорта. С опцией сохранения создаётся новая папка `audio-…`: отдельные WAV по источникам и `timeline.json` с их временем, разрывами и параметрами. Файлы ротируются приблизительно каждые 10 минут; источник не смешивается с другим. Экспорт не перезаписывает существующие файлы.
+| Component | Pinned revision |
+| --- | --- |
+| GigaAM code | `7447938d791c4f3e643386ee22c33777004293a5` |
+| Model | `2f8a57144e6ec3adfd32fe0484d9ea9913305bc8` |
 
-Диагностика не пишет содержание разговора; нет телеметрии и отправки отчётов. При этом Windows может использовать подкачку и дампы, а выбранная папка может синхронизироваться OneDrive или попадать в резервные копии. Используйте подходящую локальную папку и политику хранения; подробности в [PRIVACY.md](docs/PRIVACY.md).
+Configuration and weight SHA256 values are checked before loading. The model supports Kazakh, Russian, English, and mixed speech; broad real-device language quality has not been certified. Check important transcripts against the conversation.
 
-## Разработка и проверка
+Fragments usually become available after a pause or around eight seconds of continuous speech, plus inference time. Latency depends on the CPU and active sources. The application uses boundary context, timestamp confirmation, and a bounded queue holding up to 48 seconds of audio. If processing falls behind, the interface reports it. On overflow, new blocks are skipped with a visible warning. Stopping capture drains pending fragments before export. Noise, short words, silence, language changes, and fragment boundaries can still cause errors.
 
-Сборка и получение зависимостей требуют интернета **только на этапе разработки/сборки**. Инструкции: [BUILD.md](docs/BUILD.md). Архитектура: [ARCHITECTURE.md](docs/ARCHITECTURE.md). Отчёт и незавершённые аппаратные проверки: [TESTING.md](docs/TESTING.md).
+## Privacy and local storage
 
-Лицензия приложения MIT; полный ZIP содержит отдельные лицензии модели, Python, GigaAM, PyAudioWPatch/PortAudio, PyTorch, NumPy, SentencePiece, Tcl/Tk, библиотек экспорта и шрифта. [NOTICE.md](NOTICE.md) описывает происхождение переиспользованного кода. Исходный `teams-local-transcriber` — отдельный проект, его изменения для этой архитектуры не требуются.
+Audio saving is **off by default**. Without it, PCM stays in bounded memory buffers; no temporary audio files are created. Transcripts remain in memory until explicitly exported. Enabling audio saving creates a new `audio-…` folder with separate source WAV files and a `timeline.json` recording timing, gaps, and parameters. WAV files rotate approximately every ten minutes. Exports do not overwrite existing files.
+
+There is no telemetry, crash-report upload, or conversation content in diagnostic logs. Python network access is blocked inside the application process. This guard and sampled TCP/UDP checks are limited evidence, not a system-wide network guarantee. Windows paging or crash dumps may retain memory, and your chosen folder may be backed up or synchronized by OneDrive. Choose storage and retention policies accordingly. See [PRIVACY.md](docs/PRIVACY.md) for the method and limits.
+
+## Documentation and maintenance
+
+| Document | Purpose |
+| --- | --- |
+| **[DevOps runbook / Памятка DevOps](docs/DEVOPS_RUNBOOK.md)** | Detailed Russian guide: sequential commands for download, checksum verification, installation, diagnostics, source builds, GitHub releases, updates, and rollback |
+| [BUILD.md](docs/BUILD.md) | Build pipeline, pinned dependencies, licenses, and evidence handling |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Capture, buffering, inference, session lifecycle, and export design |
+| [TESTING.md](docs/TESTING.md) | Automated evidence, user acceptance, and remaining manual checks |
+| [ECHO.md](docs/ECHO.md) | Duplicate filtering behavior and limitations |
+| [PRIVACY.md](docs/PRIVACY.md) | Offline runtime and local data handling |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
+
+Dependency and model acquisition require internet access **during builds only**. GitHub Actions builds a portable bundle; documentation-only commits on `main` do not replace existing release assets. New code versions require a new release tag and verification.
+
+## Licenses
+
+Application code is MIT licensed. The complete runtime ZIP includes component notices for the model, Python, GigaAM, PyAudioWPatch/PortAudio, PyTorch, NumPy, SentencePiece, Tcl/Tk, export libraries, fonts, and runtime dependencies. See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md) for licensing and reused-code provenance. The original `teams-local-transcriber` remains a separate project.

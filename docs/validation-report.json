@@ -30,7 +30,16 @@
   },
   "manual_acceptance": {
     "v0.1.1_capture": "User reported successful microphone and output-device capture; no conversation content published",
-    "v0.1.2_speaker_echo": "Pending explicit user-started hardware test",
+    "v0.1.2_speaker_echo": {
+      "application_version": "0.1.2",
+      "reported_on": "2026-10-14",
+      "status": "passed_user_observation",
+      "source": "Explicit user response to the manual microphone/system-output acceptance test",
+      "echo_duplicates_removed": true,
+      "own_voice_preserved": true,
+      "scope_limit": "One user-reported live test; duration, device configuration, speech languages and numerical acoustic measurements were not recorded. Long sessions, quiet double-talk and broad multilingual accuracy are not established.",
+      "private_data_published": false
+    },
     "real_kazakh_and_natural_mixed_speech": "Not established by synthetic Unicode rules tests"
   },
   "current_frozen_validation": {
@@ -212,12 +221,12 @@
           "shared_timeline_valid": true,
           "automatic_idle_flush_before_stop": true,
           "maximum_pending_seconds": 24.58,
-          "configured_bound_seconds": 48.0,
-          "pending_after_stop_seconds": 0.0,
+          "configured_bound_seconds": 48,
+          "pending_after_stop_seconds": 0,
           "rejected_blocks": 0,
           "fault_count": 0,
           "progress_updates": 4,
-          "last_progress_pending_seconds": 0.0,
+          "last_progress_pending_seconds": 0,
           "accelerated_stream_phase_seconds": 6.563,
           "total_elapsed_seconds": 35.601,
           "blocked_python_network_attempts": 0,
@@ -244,7 +253,7 @@
               "language": "ru",
               "reference_words": 26,
               "word_edits": 0,
-              "wer": 0.0,
+              "wer": 0,
               "duration_seconds": 11.29,
               "inference_seconds": 2.894
             },
@@ -252,7 +261,7 @@
               "language": "en",
               "reference_words": 17,
               "word_edits": 0,
-              "wer": 0.0,
+              "wer": 0,
               "duration_seconds": 5.855,
               "inference_seconds": 1.327
             },

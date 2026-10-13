@@ -23,7 +23,7 @@
     "microphone_words": 26,
     "microphone_duplicate_words_removed": 26
   },
-  "hardware_acceptance": "New v0.1.2 speaker echo acceptance pending an explicit user-started test; no user's audio or transcript published",
+  "hardware_acceptance": "User confirmed on 2026-10-14 that duplicates disappeared and own voice remained in the live v0.1.2 test; see manual-acceptance.json. This is one reported observation, not a broad hardware/language certification.",
   "local_build": {
     "python": "3.12.3",
     "frozen_seconds": 31.119,

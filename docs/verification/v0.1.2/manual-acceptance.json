@@ -1,0 +1,10 @@
+{
+  "application_version": "0.1.2",
+  "reported_on": "2026-10-14",
+  "status": "passed_user_observation",
+  "source": "Explicit user response to the manual microphone/system-output acceptance test",
+  "echo_duplicates_removed": true,
+  "own_voice_preserved": true,
+  "scope_limit": "One user-reported live test; duration, device configuration, speech languages and numerical acoustic measurements were not recorded. Long sessions, quiet double-talk and broad multilingual accuracy are not established.",
+  "private_data_published": false
+}
