@@ -8,7 +8,8 @@
     "errors": 0,
     "skipped": 0,
     "seconds": 14.9,
-    "ruff": "clean"
+    "ruff": "clean",
+    "scope": "Initial capture-hotfix validation; complete suite after build-loader changes reported below"
   },
   "capture_regression": {
     "old_version_reproduced_failure": true,
@@ -152,12 +153,12 @@
         "shared_timeline_valid": true,
         "automatic_idle_flush_before_stop": true,
         "maximum_pending_seconds": 24.58,
-        "configured_bound_seconds": 48.0,
-        "pending_after_stop_seconds": 0.0,
+        "configured_bound_seconds": 48,
+        "pending_after_stop_seconds": 0,
         "rejected_blocks": 0,
         "fault_count": 0,
         "progress_updates": 4,
-        "last_progress_pending_seconds": 0.0,
+        "last_progress_pending_seconds": 0,
         "accelerated_stream_phase_seconds": 6.563,
         "total_elapsed_seconds": 35.601,
         "blocked_python_network_attempts": 0,
@@ -184,7 +185,7 @@
             "language": "ru",
             "reference_words": 26,
             "word_edits": 0,
-            "wer": 0.0,
+            "wer": 0,
             "duration_seconds": 11.29,
             "inference_seconds": 2.894
           },
@@ -192,7 +193,7 @@
             "language": "en",
             "reference_words": 17,
             "word_edits": 0,
-            "wer": 0.0,
+            "wer": 0,
             "duration_seconds": 5.855,
             "inference_seconds": 1.327
           },
@@ -248,5 +249,17 @@
         "archive_crc_validation_claimed": false
       }
     }
+  },
+  "latest_complete_suite": {
+    "passed": 123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "local_seconds": 19.52,
+    "windows_runner_seconds": 8.23,
+    "ruff": "clean",
+    "build_commit": "3501ff2e7a94ef703d1280931489bfd7b72c9d87",
+    "run_url": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/actions/runs/38431257518",
+    "run_conclusion": "success"
   }
 }

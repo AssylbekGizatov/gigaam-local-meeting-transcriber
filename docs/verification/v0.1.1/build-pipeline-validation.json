@@ -1,0 +1,26 @@
+{
+  "application_version": "0.1.1",
+  "build_commit": "3501ff2e7a94ef703d1280931489bfd7b72c9d87",
+  "workflow_run": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/actions/runs/38431257518",
+  "conclusion": "success",
+  "build_platform": "Windows Server 2022 x64",
+  "bundled_python": "3.12.10",
+  "unit_tests": 123,
+  "unit_test_seconds": 8.23,
+  "checks": "Source tests, Ruff, frozen-source attestation, frozen public-PCM inference and exports, sampled TCP/UDP audit, PE DLL audit; publication follows successful checks",
+  "release_url": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/releases/tag/v0.1.1",
+  "archive": {
+    "name": "GigaAM-Meeting-windows-x64.zip",
+    "size": 990345468,
+    "digest": "sha256:fd2aa90a38ef3d95fad7ec4a5cd8031420f79fcc07dd4452f33daf7d7ff720a6",
+    "browser_download_url": "https://github.com/AssylbekGizatov/gigaam-local-meeting-transcriber/releases/download/v0.1.1/GigaAM-Meeting-windows-x64.zip"
+  },
+  "checksum_sidecar_sha256": "fd2aa90a38ef3d95fad7ec4a5cd8031420f79fcc07dd4452f33daf7d7ff720a6",
+  "checksum_comparison": "Published sidecar equals GitHub archive SHA256 digest",
+  "hardware_acceptance": "Physical device acceptance still requires an explicit user-started recording; no user audio sent to CI",
+  "local_build": {
+    "python": "3.12.3",
+    "archive_sha256": "1cbd75ab6e3fe34e85b7240d0c34b2d433bb76b1763e26016928e8312b4d8959",
+    "note": "Separate local build, full CRC and manifest verification passed. Different interpreter and build evidence yield a different archive hash."
+  }
+}
