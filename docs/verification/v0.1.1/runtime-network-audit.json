@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "udp_endpoint_observations": 0,
+  "physical_network_disconnection_tested": false,
+  "snapshots": 41,
+  "clean_python_free_vm_tested": false,
+  "tcp_endpoint_observations": 0,
+  "scope": "PID TCP/UDP endpoint sampling during public fixture self-test; sanitized PATH/PYTHONHOME/PYTHONPATH",
+  "limitations": "Sampling can miss short connections/native activity routed via other processes. Python exists on this host but is excluded from child runtime search. No firewall/network settings changed."
+}

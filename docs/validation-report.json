@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "application_version": "0.1.1",
-  "scope": "WASAPI clock-jitter hotfix; current source validated, frozen bundle verification required before release",
+  "scope": "WASAPI clock-jitter hotfix; current source and local Windows frozen executable validated",
   "automated_tests": {
     "passed": 120,
     "failures": 0,
@@ -25,7 +25,17 @@
     "physical_devices_tested": false
   },
   "frozen_runtime_validation": {
-    "status": "pending"
+    "status": "passed",
+    "python": "3.12.3",
+    "selftest_seconds": 30.889,
+    "endpoint_samples": 41,
+    "tcp": 0,
+    "udp": 0,
+    "source_match_files": 13,
+    "evidence_directory": "verification/v0.1.1",
+    "physical_devices_tested": false,
+    "clean_python_free_vm_tested": false,
+    "physical_network_disconnection_tested": false
   },
   "prior_version_evidence": {
     "application_version": "0.1.0",

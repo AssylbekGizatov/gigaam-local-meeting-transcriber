@@ -52,9 +52,10 @@ def source_paths(root: Path) -> list[Path]:
     verification = root / "docs/verification"
     if verification.is_dir():
         selected.extend(path for path in verification.rglob("*") if path.is_file() and path.suffix.lower() in {".md", ".json", ".xml"})
-        patch_source = verification / "gigaam-lazy-soundfile-patch"
-        selected.extend(patch_source.glob("*.py.txt"))
-        selected.extend(patch_source.glob("*.patch"))
+        for patch_source in (verification / "gigaam-lazy-soundfile-patch",
+                             verification / "v0.1.1/gigaam-lazy-soundfile-patch"):
+            selected.extend(patch_source.glob("*.py.txt"))
+            selected.extend(patch_source.glob("*.patch"))
     return sorted(set(selected), key=lambda path: path.relative_to(root).as_posix())
 
 

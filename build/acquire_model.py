@@ -3,33 +3,53 @@ import argparse
 import hashlib
 from pathlib import Path
 import shutil
+import tempfile
 import urllib.request
 
 REVISION = "2f8a57144e6ec3adfd32fe0484d9ea9913305bc8"
 FILES = {
     "config.json": "c830232c7d51688a630a221517b52585ab5ee57e1d3c21bcbae01759351d2653",
     "pytorch_model.bin": "e1db43873ec5e296f229572e06e2470fc157ac9f8d4aacabda295630b9b91728",
+    "LICENSE": "f00de6715714c7a63d08639cdbfaa40224eefc407302614bd19f1a8b98c875aa",
 }
+CODE_REVISION = "7447938d791c4f3e643386ee22c33777004293a5"
+
+
+def artifact_url(name):
+    # The pinned model card declares MIT, but its repository has no LICENSE file.
+    # Include the upstream GigaAM full terms from the same pinned code we package.
+    if name == "LICENSE":
+        return f"https://raw.githubusercontent.com/salute-developers/GigaAM/{CODE_REVISION}/LICENSE"
+    return f"https://huggingface.co/ai-sage/GigaAM-Multilingual/resolve/{REVISION}/{name}"
+
+
+def acquire(directory):
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, expected in FILES.items():
+        target = directory / name
+        if not target.exists():
+            with tempfile.TemporaryDirectory(prefix=".acquire-", dir=directory) as scratch:
+                partial = Path(scratch) / name
+                with urllib.request.urlopen(artifact_url(name), timeout=120) as source:
+                    with partial.open("xb") as out:
+                        shutil.copyfileobj(source, out, length=1024 * 1024)
+                with partial.open("rb") as stream:
+                    digest = hashlib.file_digest(stream, "sha256").hexdigest()
+                if digest != expected:
+                    raise RuntimeError(f"Downloaded {name} failed SHA256")
+                # Windows rename refuses an existing destination, including a race.
+                partial.rename(target)
+        with target.open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        if digest != expected:
+            raise RuntimeError(f"Existing {name} failed SHA256; never overwrite it silently")
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--directory", type=Path, default=Path("models/gigaam"))
     args = parser.parse_args()
-    args.directory.mkdir(parents=True, exist_ok=True)
-    for name in (*FILES, "LICENSE"):
-        target = args.directory / name
-        if not target.exists():
-            partial = target.with_suffix(target.suffix + ".partial")
-            with urllib.request.urlopen(f"https://huggingface.co/ai-sage/GigaAM-Multilingual/resolve/{REVISION}/{name}", timeout=120) as source:
-                with partial.open("xb") as out:
-                    shutil.copyfileobj(source, out, length=1024 * 1024)
-            partial.rename(target)
-        if name in FILES:
-            with target.open("rb") as stream:
-                digest = hashlib.file_digest(stream, "sha256").hexdigest()
-            if digest != FILES[name]:
-                raise RuntimeError(f"Existing/downloaded {name} failed SHA256; never overwrite it silently")
+    acquire(args.directory)
 
 
 if __name__ == "__main__":

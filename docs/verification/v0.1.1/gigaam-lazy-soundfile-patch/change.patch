@@ -1,0 +1,19 @@
+--- gigaam/utils.py upstream
++++ gigaam/utils.py desktop
+@@ -7,7 +7,6 @@
+ from typing import Dict, List, Optional, Tuple, Union, cast
+ 
+ import numpy as np
+-import soundfile as sf
+ import torch
+ import torch.nn.functional as F
+ import torchaudio
+@@ -270,6 +269,8 @@
+     @staticmethod
+     def _get_duration(item: Union[str, np.ndarray, Tensor]) -> float:
+         if isinstance(item, str):
++            import soundfile as sf  # Desktop build: optional path-only dependency.
++
+             with sf.SoundFile(item) as f:
+                 return f.frames / f.samplerate
+         if isinstance(item, np.ndarray):
