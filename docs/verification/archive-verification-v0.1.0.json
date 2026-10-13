@@ -1,0 +1,25 @@
+{
+  "as_of_date": "2026-10-13",
+  "status": "passed",
+  "method": "Read every ZIP entry to EOF (CRC); SHA256 and exact manifest/source snapshot comparison",
+  "archives": [
+    {
+      "filename": "GigaAM-Meeting-windows-x64.zip",
+      "bytes": 990304464,
+      "sha256": "22d5fe1067d26a9f03f93dc354e3e693f914a26a2cce38674818ddec297b3e63",
+      "files": 3963,
+      "uncompressed_bytes": 1350393195,
+      "crc_all_entries": "passed",
+      "exact_contents": "passed"
+    },
+    {
+      "filename": "GigaAM-Meeting-source-v0.1.0.zip",
+      "bytes": 852824,
+      "sha256": "0d27bf88870073f21fd1a911a244ae646e178528cd8865da11923df305973269",
+      "files": 69,
+      "uncompressed_bytes": 1660046,
+      "crc_all_entries": "passed",
+      "exact_contents": "passed"
+    }
+  ]
+}
